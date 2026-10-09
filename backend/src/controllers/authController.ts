@@ -8,6 +8,20 @@ const usersDummy = [
         email: "zidan@example.com",
         status: "active",
         password: "12345"
+    },
+    {
+        id: 2,
+        name: "Ratna",
+        email: "ratna@example.com",
+        status: "active",
+        password: "12345"
+    },
+    {
+        id: 3,
+        name: "Laras",
+        email: "laras@example.com",
+        status: "active",
+        password: "12345"
     }
 ]
 
