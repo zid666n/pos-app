@@ -1,31 +1,5 @@
-import type { ResultSetHeader, QueryResult } from "mysql2"
+import type { ResultSetHeader } from "mysql2"
 import db from "../../../../core/databases/db.ts"
-import ItemNotFoundError from "../../../shared/application/exceptions/ItemNotFoundError.ts"
-
-const users = [
-    {
-        id: 1,
-        name: "Zidan",
-        email: "zidan@example.com",
-        status: "active",
-        password: "12345"
-    },
-    {
-        id: 2,
-        name: "Ratna",
-        email: "ratna@example.com",
-        status: "active",
-        password: "12345"
-    },
-    {
-        id: 3,
-        name: "Laras",
-        email: "laras@example.com",
-        status: "active",
-        password: "12345"
-    }
-]
-
 export type TUser = {
     id: number,
     name: string,
@@ -36,7 +10,7 @@ export type TUser = {
 export type TUserPayload = {
     name: string,
     email: string,
-    status: string,
+    is_active: boolean,
     password: string
 }
 
@@ -52,13 +26,33 @@ export const findUser = async (id: number): Promise<TUser> => {
     return (user as unknown) as TUser
 }
 
-export const createUser = async (payload: TUserPayload): Promise<number> => {
-    const res = await db.query<ResultSetHeader>(`insert into users (name, email, is_active, password) values ('${payload.name}', '${payload.email}', ${payload.status}, '${payload.password}')`)
-    return res[0].insertId
+export const createUser = async (payload: TUserPayload): Promise<TUser> => {
+    const res = await db.query<ResultSetHeader>(`insert into users (name, email, is_active, password) values (?, ?, ?, ?)`, [payload.name, payload.email, payload.is_active, payload.password])
+    
+    return {
+        id: res[0].insertId,
+        ...payload
+    }
 }
 
 export const updateUser = async (id: number, payload: TUserPayload): Promise<void> => {
-    await db.query(`update users set name = ?, email = ?, password = ? where id = ?`, [payload.name, payload.email, payload.password, id])
+    await db.query(`
+        UPDATE users SET
+            name = ?,
+            email = ?,
+            password = IF(? = '' OR ? IS NULL, password, ?),
+            is_active = ?
+        where id = ?`,
+        [
+            payload.name,
+            payload.email,
+            payload.password,
+            payload.password,
+            payload.password,
+            payload.is_active,
+            id
+        ]
+    )
 }
 
 export const deleteUser = async (id: number): Promise<void> => {

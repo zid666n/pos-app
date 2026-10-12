@@ -7,7 +7,7 @@ const updateUserUsecase = async (id: number, payload: TUserPayload): Promise<TUs
         id: id,
         name: payload.name,
         email: payload.email,
-        is_active: payload.status === "active" ? true : false
+        is_active: payload.is_active
     }
 }
 

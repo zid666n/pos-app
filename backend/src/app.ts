@@ -3,6 +3,8 @@ import cors from "cors"
 import authRouter from "./routes/authRouter.ts"
 import ApplicationException from "./modules/shared/application/exceptions/ApplicationException.ts"
 import userRouter from "./routes/userRouter.ts"
+import productRouter from "./routes/productRouter.ts"
+import categoryRouter from "./routes/categoryRouter.ts"
 
 const app = express()
 app.use(cors())
@@ -10,6 +12,8 @@ app.use(express.json())
 
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
+app.use('/api/categories', categoryRouter)
+app.use('/api/products', productRouter)
 
 app.get("/", (req, res) => {
     res.json({

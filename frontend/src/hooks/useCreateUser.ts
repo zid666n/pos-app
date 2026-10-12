@@ -1,36 +1,39 @@
 import { useState } from "react"
-import { createUserService, type TCreateUserPayload } from "../services/userService"
+import { createUserService, type TUserPayload } from "../services/userService"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 const useCreateUser = () => {
-    const initState: TCreateUserPayload = {
+    const initState: TUserPayload = {
         email: "",
         name: "",
         password: "",
-        status: "active"
+        is_active: true
     }
+    
+    const [formState, setFormState] = useState<TUserPayload>(initState)
+    const queryClient = useQueryClient()
 
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [formState, setFormState] = useState<TCreateUserPayload>(initState)
+    const mutation = useMutation({
+        mutationFn: createUserService,
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['users']})
+
+
+        }
+    })
 
     const handleClose = () => setFormState(initState)
 
-    const handleSelect = (name: string, value: string) => setFormState({...formState, [name]: value})
+    const handleSelect = (name: string, value: string) => {
+        const val = value.toLowerCase() === "active"
 
-    const handleSubmit = async () => {
-        try {
-            setIsLoading(true)
+        setFormState({...formState, [name]: val})
+    }
 
-            const req = await createUserService(formState)
-            const res = await req.json()
-
-            if (req.ok) {
-                
-            }
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setIsLoading(false)
-        }
+    const handleSubmit =  (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        
+        mutation.mutate(formState)
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => setFormState({...formState, [e.target.name]: e.target.value})
@@ -38,7 +41,7 @@ const useCreateUser = () => {
     return {
         handleSubmit,
         handleChange,
-        isLoading,
+        isLoading: mutation.isPending,
         handleClose,
         handleSelect
     }

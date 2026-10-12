@@ -7,7 +7,8 @@ interface IAppInputGroup {
     placeholder: string,
     name: string,
     type: "text" | "number" | "email" | "password"
-    onChange: (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => void
+    onChange: (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => void,
+    defaultValue: string
 }
 
 export default function AppInputGroup({
@@ -15,9 +16,10 @@ export default function AppInputGroup({
     onChange,
     type,
     name,
-    placeholder
+    placeholder,
+    defaultValue
 }: IAppInputGroup) {
-    return <Field className="max-w-sm">
+    return <Field className="max-w-full">
         <Label htmlFor={label}>{label}</Label>
             <Input
                 id={label}
@@ -25,6 +27,7 @@ export default function AppInputGroup({
                 type={type}
                 placeholder={placeholder}
                 onChange={onChange}
+                defaultValue={defaultValue}
             />
     </Field>
 }

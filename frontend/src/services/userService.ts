@@ -1,19 +1,32 @@
-export type TCreateUserPayload = {
+import type { TResponseAPI } from "../lib/types/response.type"
+import api from "./api"
+
+export type TUserPayload = {
     name: string,
     email: string,
     password: string,
-    status: string
+    is_active: boolean
 }
 
-export const createUserService = async ({email, name, password, status}: TCreateUserPayload) => await fetch('http://localhost:5000/api/users', {
-    headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        name,
-        email,
-        password,
-        status
-    })
-})
+export type TUsers = {
+    id: number,
+    name: string,
+    email: string,
+    is_active: boolean
+}
+
+export const createUserService = async (payload: TUserPayload) => await api.post('users', {...payload})
+
+export const getUserService = async (): Promise<TResponseAPI<TUsers[]>> => await api.get('/users')
+
+export type TDeleteUserPayload = {
+    id: number,
+    name: string,
+    email: string,
+    is_active: boolean,
+    password: string
+}
+
+export const updateUserService = async (id: number, payload: TUserPayload) => await api.put(`/users/${id}`, payload)
+
+export const deleteUserService = async (id: number): Promise<void> => await api.delete(`/users/${id}`)
