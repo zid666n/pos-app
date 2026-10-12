@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express"
-import InvalidCredentialError from "../exceptions/InvalidCredentialError.ts"
+import InvalidCredentialError from "../modules/shared/application/exceptions/InvalidCredentialError.ts"
 
 const usersDummy = [
     {

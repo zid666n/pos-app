@@ -1,6 +1,6 @@
 import type { ResultSetHeader, QueryResult } from "mysql2"
-import db from "../core/databases/db.ts"
-import ItemNotFoundError from "../exceptions/ItemNotFoundError.ts"
+import db from "../../../../core/databases/db.ts"
+import ItemNotFoundError from "../../../shared/application/exceptions/ItemNotFoundError.ts"
 
 const users = [
     {

@@ -1,4 +1,4 @@
-import { updateUser, type TUser, type TUserPayload } from "../repositories/userRepository.ts";
+import { updateUser, type TUser, type TUserPayload } from "../../infrastructures/repositories/userRepository.ts"
 
 const updateUserUsecase = async (id: number, payload: TUserPayload): Promise<TUser> => {
     await updateUser(id, payload)

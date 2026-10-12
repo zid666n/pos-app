@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from "express"
 import cors from "cors"
 import authRouter from "./routes/authRouter.ts"
-import ApplicationException from "./exceptions/ApplicationException.ts"
+import ApplicationException from "./modules/shared/application/exceptions/ApplicationException.ts"
 import userRouter from "./routes/userRouter.ts"
 
 const app = express()

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { destroy, index, read, store, update } from "../controllers/userController.ts";
+import { destroy, index, read, store, update } from "../modules/user/application/controllers/userController.ts";
 
 const userRouter = Router()
 

@@ -1,4 +1,4 @@
-import { deleteUser } from "../repositories/userRepository.ts"
+import { deleteUser } from "../../infrastructures/repositories/userRepository.ts"
 
 const deleteUserUsecase = async (id: number) => {
     await deleteUser(id)

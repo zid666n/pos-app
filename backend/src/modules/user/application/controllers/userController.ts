@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express"
-import getAllUserUsecase from "../useCases/getAllUserUsecase.ts"
-import findUserUsecase from "../useCases/findUserUsecase.ts"
-import MissingParamError from "../exceptions/MissingParamError.ts"
-import type { TUserPayload } from "../repositories/userRepository.ts"
-import createUserUsecase from "../useCases/createUserUsecase.ts"
-import deleteUserUsecase from "../useCases/deleteUserUsecase.ts"
-import updateUserUsecase from "../useCases/updateUserUsecase.ts"
+import MissingParamError from "../../../shared/application/exceptions/MissingParamError.ts"
+import type { TUserPayload } from "../../infrastructures/repositories/userRepository.ts"
+import findUserUsecase from "../usecases/findUserUsecase.ts"
+import createUserUsecase from "../usecases/createUserUsecase.ts"
+import updateUserUsecase from "../usecases/updateUserUsecase.ts"
+import deleteUserUsecase from "../usecases/deleteUserUsecase.ts"
+import getAllUserUsecase from "../usecases/getAllUserUsecase.ts"
 
 export const index = async (req: Request, res: Response, next: NextFunction) => {
     try {
