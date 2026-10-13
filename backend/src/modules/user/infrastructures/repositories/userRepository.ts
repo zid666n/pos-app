@@ -1,5 +1,6 @@
-import type { ResultSetHeader } from "mysql2"
+import type { ResultSetHeader, RowDataPacket } from "mysql2"
 import db from "../../../../core/databases/db.ts"
+import Database from "../../../shared/infrastructures/databases/Database.ts"
 export type TUser = {
     id: number,
     name: string,
@@ -15,9 +16,9 @@ export type TUserPayload = {
 }
 
 export const getUsers = async (): Promise<TUser[]> => {
-    const [rows] = await db.query("SELECT id, name, email, is_active FROM users")
+    const rows = await Database.select<TUser[]>(['id', 'name', 'email', 'is_active'], 'users')
 
-    return (rows as unknown) as TUser[]
+    return rows
 }
 
 export const findUser = async (id: number): Promise<TUser> => {
@@ -27,12 +28,9 @@ export const findUser = async (id: number): Promise<TUser> => {
 }
 
 export const createUser = async (payload: TUserPayload): Promise<TUser> => {
-    const res = await db.query<ResultSetHeader>(`insert into users (name, email, is_active, password) values (?, ?, ?, ?)`, [payload.name, payload.email, payload.is_active, payload.password])
+    const res = await Database.insert<TUser>(['name', 'email', 'is_active', 'password'], [payload.name, payload.email, payload.is_active, payload.password], 'users')
     
-    return {
-        id: res[0].insertId,
-        ...payload
-    }
+    return res
 }
 
 export const updateUser = async (id: number, payload: TUserPayload): Promise<void> => {

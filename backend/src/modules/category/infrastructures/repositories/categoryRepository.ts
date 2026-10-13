@@ -48,5 +48,5 @@ export const updateCategory = async (id: number, payload: TCategoryPayload): Pro
 export const deleteCategory = async (id: number): Promise<boolean> => {
     const [res] = await db.query<ResultSetHeader>(`DELETE FROM categories WHERE id = ?`, [id])
 
-    return res.affectedRows === 0
+    return res.affectedRows > 0
 }
