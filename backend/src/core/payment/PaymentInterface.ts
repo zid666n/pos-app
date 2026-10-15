@@ -3,6 +3,13 @@ export type TRequestPayload = {
     itemDetails: Record<string, string|boolean|number>[]
 }
 
+export type TPaymentResponse<T> = {
+    orderId: number,
+    grossAmount: number,
+    paymentGateway: T,
+    items: Record<string, any>[],
+}
+
 export default interface PaymentInterface {
-    pay(payload: TRequestPayload): void 
+    pay<T>(payload: TRequestPayload): Promise<TPaymentResponse<T>>
 }

@@ -1,7 +1,9 @@
-import type { RowDataPacket } from "mysql2"
 import Database from "../databases/Database.ts"
-import { TProduct } from "../../../product/infrastructures/repositories/productRepository.ts"
 import ItemNotFoundError from "../../application/exceptions/ItemNotFoundError.ts"
+import PaymentAdapter from "../../../../core/payment/PaymentAdapter.ts"
+import Midtrans from "../../../../core/payment/Midtrans.ts"
+import type { TProduct } from "../../../product/infrastructures/repositories/productRepository.ts"
+import MidtransClient from "midtrans-client"
 
 export type TCreateTransactionPayload = {
     order_number: string
@@ -35,33 +37,36 @@ const createTransactionService = async (p: TCreateTransactionPayload) => {
             })
         }) 
 
-        const parameter = {
-            transaction_details: {
+        const paymentAdapter = new PaymentAdapter(Midtrans.getInstance())
+        const res = await paymentAdapter.createTransaction<MidtransClient.SnapTransactionResponse>({
+            itemDetails: itemDetails,
+            transactionDetails: {
                 gross_amount: p.total
-            },
-            item_details: itemDetails,
-            enable_payments: ['gopay']
-        }
+            }
+        })
 
-        // const res = await Database.insert([
-        //     'order_number',
-        //     'user_id',
-        //     'payment_method',
-        //     'subtotal',
-        //     'tax',
-        //     'total'
-        // ], [
-        //     p.order_number,
-        //     p.user_id,
-        //     p.payment_method,
-        //     p.subtotal,
-        //     p.tax,
-        //     p.total
-        // ], 'orders')
+        const result = await Database.insert([
+            'order_number',
+            'user_id',
+            'payment_method',
+            'subtotal',
+            'tax',
+            'total'
+        ], [
+            p.order_number,
+            p.user_id,
+            p.payment_method,
+            res.grossAmount,
+            p.tax,
+            res.grossAmount
+        ], 'orders')
 
 
         
         await Database.commit()
+        await Database.release()
+
+        return res
     } catch (error) {
         await Database.rollback()
     }

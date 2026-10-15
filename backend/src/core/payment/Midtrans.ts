@@ -1,4 +1,4 @@
-import type { TRequestPayload } from "./PaymentInterface.ts";
+import type { TPaymentResponse, TRequestPayload } from "./PaymentInterface.ts";
 import type PaymentInterface from "./PaymentInterface.ts";
 import MidtransClient from "midtrans-client";
 
@@ -23,13 +23,24 @@ class Midtrans implements PaymentInterface {
         return this.me
     }
 
-    pay(payload: TRequestPayload): void {
+    async pay<T>(payload: TRequestPayload): Promise<TPaymentResponse<T>> {
         const parameter = {
             transaction_details: {
+                order_id: String(payload.transactionDetails.order_id),
                 gross_amount: Number(payload.transactionDetails.total)
             },
             item_details: payload.itemDetails,
             enable_payments: ['gopay']
+        }
+
+        if (this.snap === null) throw new Error(`Init First! Midtrans payment error`)
+        const res = await this.snap.createTransaction(parameter)
+
+        return {
+            orderId: Number(payload.transactionDetails.order_id),
+            items: payload.itemDetails,
+            grossAmount: Number(payload.transactionDetails.gross_amount),
+            paymentGateway: res as T
         }
     }
 }

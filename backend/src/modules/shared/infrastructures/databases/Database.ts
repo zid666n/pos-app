@@ -76,6 +76,10 @@ class Database
         return await this.pool.beginTransaction()
     }
 
+    static async release() {
+        return (await this.pool.getConnection()).release()
+    }
+
     static async rollback() {
         return await this.pool.rollback()
     }
