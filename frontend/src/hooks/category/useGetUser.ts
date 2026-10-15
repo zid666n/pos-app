@@ -1,9 +1,9 @@
 import {useQuery} from "@tanstack/react-query"
-import { getUserService } from "../services/userService"
+// import { getUserService } from "../services/userService"
 
 const useGetUser = () => useQuery({
     queryKey: ['users'],
-    queryFn: getUserService,
+    // queryFn: getUserService,
     retry: 2,
 })
 

@@ -1,12 +1,12 @@
-import useGetUser from "../../hooks/useGetUser";
+import useDeleteUser from "../../hooks/user/useDeleteUser";
+import useEditUser from "../../hooks/user/useEditUser";
+import useGetUser from "../../hooks/user/useGetUser";
 import { Button } from "../../lib/shadcn/ui/button";
 import { TableCell, TableHead, TableRow } from "../../lib/shadcn/ui/table";
 import ActiveBadge from "../atoms/ActiveBadge";
 import DeactiveBadge from "../atoms/DeactiveBadge";
 import AppDialog from "../molecules/AppDialog";
 import AppTable from "../molecules/AppTable";
-import useDeleteUser from "../../hooks/useDeleteUser";
-import useEditUser from "../../hooks/useEditUser";
 import FormUserModal from "./FormUserModal";
 
 export default function UserTable() {

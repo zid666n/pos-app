@@ -4,16 +4,10 @@ import { Button } from "../lib/shadcn/ui/button";
 import { TableCell, TableHead, TableRow } from "../lib/shadcn/ui/table";
 import { Card, CardContent } from "../lib/shadcn/ui/card";
 import FormUserModal from "../components/organism/FormUserModal";
-import useCreateUser from "../hooks/useCreateUser";
+import useCreateUser from "../hooks/user/useCreateUser";
 import { useState } from "react";
 import UserTable from "../components/organism/UserTable";
-
-type TUserDummy = {
-    id: number,
-    name: string,
-    status: string,
-    email: string
-}
+import AppHeader from "../components/molecules/AppHeader";
 
 export default function UserPage() {
     const [openCreateModal, setOpenCreateModal] = useState<boolean>(false)
@@ -27,15 +21,10 @@ export default function UserPage() {
 
     return (
         <>
-            <div className="flex items-center justify-between">
-                <p>
-                    Lorem ipsum dolor sit amet
-                </p>
-                <Button variant="default" size="lg" onClick={() => setOpenCreateModal(true)}>
-                    <span><PlusIcon/></span>
-                    Create User
-                </Button>
-            </div>
+            <AppHeader
+                buttonLabel="Create User"
+                handleOpenModal={() => setOpenCreateModal(true)}
+            />
             <Card className="py-2">
                 <CardContent>
                     <UserTable/>

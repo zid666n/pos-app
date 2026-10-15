@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { login, type TLoginPayload } from "../services/authService"
+import { loginService, type TLoginPayload } from "../../services/authService"
+import { useMutation } from "@tanstack/react-query"
 
 const useLogin = () => {
     const [formState, setFormState] = useState<TLoginPayload>({
@@ -9,37 +10,28 @@ const useLogin = () => {
     })
     const navigate = useNavigate()
 
-    const [loading, setLoading] = useState(false)
+    const mutation = useMutation({
+        mutationFn: async (p: TLoginPayload) => await loginService(p),
+        onSuccess: (data) => {
+            localStorage.setItem('user-token', data.data.token)
+
+            navigate("/dashboard")
+        }
+    })
+
     const handleChange = (event: any) => setFormState(prev => ({ ...prev, [event.target.name]: event.target.value }))
 
     const handleCancel = () => setFormState({ email: "", password: "" })
 
     const handleSubmit = async (event: any) => {
         event.preventDefault()
-        setLoading(true)
-        try {
-            const res = await login(formState)
-            
-            const result = await res.json()
 
-            if (res.ok) {
-                localStorage.setItem('user', result.data.token)
-            }
-
-            setTimeout(() => {
-                navigate("/dashboard")
-            }, 1000);
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false)
-        }
-        
+        mutation.mutate(formState)
     }
 
     return {
         formState,
-        loading,
+        loading: mutation.isPending,
         handleCancel,
         handleChange,
         handleSubmit

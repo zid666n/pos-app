@@ -2,14 +2,8 @@ INSERT INTO users (name, email, is_active, password) VALUES (
     'Zidan',
     'zidan@example.com',
     1,
-    '12345'
+    '$2a$12$YVwdTU03Dgaop0RJ8cbOHOI5j83gVqsALXZJE4qygNc1au1GbmiAm'
 ),
-(
-    'Budi',
-    'budi@example.com',
-    1,
-    '12345'
-);
 
 INSERT INTO categories (name, is_active) VALUES (
     'Coffee',

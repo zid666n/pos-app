@@ -1,4 +1,4 @@
-import useLogin from "../../hooks/useLogin";
+import useLogin from "../../hooks/auth/useLogin";
 import { Button } from "../../lib/shadcn/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../lib/shadcn/ui/card";
 import { Field, FieldLabel } from "../../lib/shadcn/ui/field";

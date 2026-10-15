@@ -5,12 +5,15 @@ import ApplicationException from "./modules/shared/application/exceptions/Applic
 import userRouter from "./routes/userRouter.ts"
 import productRouter from "./routes/productRouter.ts"
 import categoryRouter from "./routes/categoryRouter.ts"
+import authMiddleware from "./middlewares/authMiddleware.ts"
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
+
+app.use(authMiddleware)
 app.use('/api/users', userRouter)
 app.use('/api/categories', categoryRouter)
 app.use('/api/products', productRouter)

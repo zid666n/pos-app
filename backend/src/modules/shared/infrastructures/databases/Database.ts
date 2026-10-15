@@ -5,7 +5,6 @@ class Database
 {
     static pool = db
 
-
     static async select<T>(fields: string[], table: string): Promise<T>
     {
         const columns = fields.map(() => '??').join(', ')
@@ -32,6 +31,18 @@ class Database
         return data as T
     }
 
+    static async insertMany<T>(fields: string[], values: (string|number|boolean)[][], table: string): Promise<T> {
+        const [res] = await this.pool.query<ResultSetHeader>(
+            `INSERT INTO ?? (??) VALUES ?`,
+            [table, fields, values]
+        )
+
+        return values.map((item, index) => ({
+            ...this.#makeData(fields, item),
+            id: res.insertId + index,
+        })) as T
+    }
+
     static async update<T>(fields: string[], values: (string | boolean|number)[], id: number, table: string): Promise<T|null>
     {
         const columns = fields.map(col => `${col} = ?`).join(', ')
@@ -53,6 +64,24 @@ class Database
         const [res] = await db.query<ResultSetHeader>(`DELETE FROM ?? WHERE id = ?`, [table, id])
 
         return res.affectedRows > 0
+    }
+
+    static async query<T>(query: string, values: (string|number|boolean)[]): Promise<T> {
+        const [res] = await this.pool.query<T & RowDataPacket[]>(query, values)
+
+        return res
+    }
+
+    static async transaction() {
+        return await this.pool.beginTransaction()
+    }
+
+    static async rollback() {
+        return await this.pool.rollback()
+    }
+
+    static async commit() {
+        return await this.pool.commit()
     }
 
     static #makeData(fields: string[], values: (string|number|boolean)[])

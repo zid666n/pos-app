@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { createUserService, type TUserPayload } from "../services/userService"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { createUserService, type TUserPayload } from "../../services/userService"
 
 const useCreateUser = () => {
     const initState: TUserPayload = {

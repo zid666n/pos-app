@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { type TUsers, updateUserService, type TDeleteUserPayload } from "../services/userService"
 import { useState } from "react"
+import { updateUserService, type TDeleteUserPayload, type TUsers } from "../../services/userService"
 
 const useEditUser = () => {
     const queryClient = useQueryClient()

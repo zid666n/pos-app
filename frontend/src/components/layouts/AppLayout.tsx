@@ -1,10 +1,23 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider } from "../../lib/shadcn/ui/sidebar";
 import AdminSidebar from "../organism/AdminSidebar";
 import AppNavbar from "../molecules/AppNavbar";
+import { useEffect } from "react";
 
 
 export default function AppLayout() {
+    const navigate = useNavigate()
+    const token = localStorage.getItem('user-token')
+
+    useEffect(() => {
+        if (!token) {
+            navigate('/login', {replace: true})
+    
+            return;
+        }
+    }, [token])
+
+
     return (
         <SidebarProvider>
             <AdminSidebar />
