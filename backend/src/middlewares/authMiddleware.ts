@@ -11,8 +11,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
         
     const token = authHeader.split(" ")[1]
 
-    console.log(authHeader)
-
     if (!token) throw new UnauthorizedError()
 
     const decode = jwt.verify(token, (process.env.JWT_SECRET || "secret"))

@@ -73,19 +73,10 @@ class Database
     }
 
     static async transaction() {
-        return await this.pool.beginTransaction()
-    }
+        const connection = await this.pool.getConnection()
 
-    static async release() {
-        return (await this.pool.getConnection()).release()
-    }
-
-    static async rollback() {
-        return await this.pool.rollback()
-    }
-
-    static async commit() {
-        return await this.pool.commit()
+        await connection.beginTransaction()
+        return connection
     }
 
     static #makeData(fields: string[], values: (string|number|boolean)[])

@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import AppLayout from './components/layouts/AppLayout'
 import DashboardPage from './pages/DashboardPage'
 import UserPage from './pages/UserPage'
+import CategoryPage from './pages/CategoryPage'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path='/dashboard' element={<DashboardPage />} />
           <Route path='/users' element={<UserPage/>} />
+          <Route path='/categories' element={<CategoryPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -53,7 +53,7 @@ export default function AppSidebar({ children }: IAppSidebar) {
                                             <AlertDialogDescription>Apakah kamu yakin ingin keluar dari dashboard?</AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                            <AlertDialogCancel variant="outline" size="default">{"a"}</AlertDialogCancel>
+                                            <AlertDialogCancel variant="outline" size="default">Batal</AlertDialogCancel>
                                             <AlertDialogAction onClick={() => { }}>Ya</AlertDialogAction>
                                         </AlertDialogFooter>
                                     </AlertDialogContent>

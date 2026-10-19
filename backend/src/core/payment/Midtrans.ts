@@ -1,47 +1,25 @@
-import type { TPaymentResponse, TRequestPayload } from "./PaymentInterface.ts";
-import type PaymentInterface from "./PaymentInterface.ts";
 import MidtransClient from "midtrans-client";
 
-class Midtrans implements PaymentInterface {
-    private static me: Midtrans | null
+class Midtrans {
+    private static instance: MidtransClient.Snap | null = null;
 
-    private snap: MidtransClient.Snap | null
+    // Sembunyikan constructor agar tidak bisa di-instansiasi dengan `new` di luar kelas
+    private constructor() {}
 
-    constructor() {
-        this.snap = new MidtransClient.Snap({
-            clientKey: process.env.MIDTRANS_CLIENT_KEY || "client-key",
-            isProduction: Boolean(process.env.MIDTRANS_IS_PRODUCTION) || false,
-            serverKey: process.env.MIDTRANS_SERVER_KEY || "server-key"
-        })
-    }
+    public static getInstance(): MidtransClient.Snap {
+        if (!Midtrans.instance) {
+            const q = {
+                isProduction: process.env.MIDTRANS_IS_PRODUCTION === 'true',
+                serverKey: process.env.MIDTRANS_SERVER_KEY || "",
+                clientKey: process.env.MIDTRANS_CLIENT_KEY || ""
+            }
 
-    static getInstance() {
-        if (this.me === null) {
-            this.me = new this()
+            console.log(q)
+
+            Midtrans.instance = new MidtransClient.Snap(q);
         }
-
-        return this.me
-    }
-
-    async pay<T>(payload: TRequestPayload): Promise<TPaymentResponse<T>> {
-        const parameter = {
-            transaction_details: {
-                order_id: String(payload.transactionDetails.order_id),
-                gross_amount: Number(payload.transactionDetails.total)
-            },
-            item_details: payload.itemDetails,
-            enable_payments: ['gopay']
-        }
-
-        if (this.snap === null) throw new Error(`Init First! Midtrans payment error`)
-        const res = await this.snap.createTransaction(parameter)
-
-        return {
-            orderId: Number(payload.transactionDetails.order_id),
-            items: payload.itemDetails,
-            grossAmount: Number(payload.transactionDetails.gross_amount),
-            paymentGateway: res as T
-        }
+        
+        return Midtrans.instance;
     }
 }
 

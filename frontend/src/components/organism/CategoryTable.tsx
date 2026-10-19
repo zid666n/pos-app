@@ -1,13 +1,13 @@
-import useDeleteUser from "../../hooks/user/useDeleteUser";
-import useEditUser from "../../hooks/user/useEditUser";
-import useGetUser from "../../hooks/user/useGetUser";
+import useDeleteCategory from "../../hooks/category/useDeleteCategory";
+import useEditCategory from "../../hooks/category/useEditCategory";
+import useGetCategory from "../../hooks/category/useGetCategory";
 import { Button } from "../../lib/shadcn/ui/button";
 import { TableCell, TableHead, TableRow } from "../../lib/shadcn/ui/table";
 import ActiveBadge from "../atoms/ActiveBadge";
 import DeactiveBadge from "../atoms/DeactiveBadge";
 import AppDialog from "../molecules/AppDialog";
 import AppTable from "../molecules/AppTable";
-import FormUserModal from "./FormUserModal";
+import FormCategoryModal from "./FormCategoryModal";
 
 export default function CategoryTable() {
     const {
@@ -15,8 +15,8 @@ export default function CategoryTable() {
         handleOnSubmit: handleDeleteSubmit,
         handleOpen: handleDeleteOpen,
         isOpenDialog: isOpenDelete,
-        user: deletedUser
-    } = useDeleteUser()
+        category: deletedCategory
+    } = useDeleteCategory()
     
     const {
         handleCancel,
@@ -26,45 +26,43 @@ export default function CategoryTable() {
         handleSubmit,
         isLoading,
         isModalOpen,
-        formState: user
-    } = useEditUser()
+        formState: category
+    } = useEditCategory()
 
-    const {data} = useGetUser()
+    const {data} = useGetCategory()
 
     return <>
         <AppTable
             headers={[
                 <TableHead>#</TableHead>,
                 <TableHead>Name</TableHead>,
-                <TableHead>Email</TableHead>,
                 <TableHead>Status</TableHead>,
                 <TableHead align="right" className="text-right">Action</TableHead>
             ]}
         >
-            {data && data.data.map((user, index) => <TableRow key={index}>
+            {data && data.data.map((category, index) => <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.is_active ? <ActiveBadge text="Active"/> : <DeactiveBadge text="Deactive"/>}</TableCell>
+                <TableCell>{category.name}</TableCell>
+                <TableCell>{category.is_active ? <ActiveBadge text="Active"/> : <DeactiveBadge text="Deactive"/>}</TableCell>
                 <TableCell align="right" className="space-x-2">
-                    <Button variant="default" type="button" onClick={() => handleOpen(user)}>Edit</Button>
-                    <Button variant="destructive" onClick={() => handleDeleteOpen(user)}>Delete</Button>
+                    <Button variant="default" type="button" onClick={() => handleOpen(category)}>Edit</Button>
+                    <Button variant="destructive" onClick={() => handleDeleteOpen(category)}>Delete</Button>
                 </TableCell>
             </TableRow>)}
         </AppTable>
-        <FormUserModal
-            user={user}
+        <FormCategoryModal
+            category={category}
             handleChange={handleChange}
             handleClose={handleCancel}
             handleSelect={handleSelect}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             isOpen={isModalOpen}
-            title="Form Edit User"
+            title="Form Edit Category"
         />
         <AppDialog
             isDialogOpen={isOpenDelete}
-            title={`Delete user ${deletedUser?.name}?`}
+            title={`Delete category ${deletedCategory?.name}?`}
             handleSubmit={handleDeleteSubmit}
             handleCancel={handleDeleteCancel}
         >
