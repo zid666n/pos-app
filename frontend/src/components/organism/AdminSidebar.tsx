@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../../lib/shadcn/ui/sidebar";
 import AppSidebar from "../molecules/AppSidebar";
-import { BoxesIcon, LayoutDashboardIcon, PresentationIcon, UserGroupIcon } from "lucide-react";
+import { BoxesIcon, LayoutDashboardIcon, PresentationIcon, ShoppingBasketIcon, UserGroupIcon } from "lucide-react";
 
 export default function AdminSidebar() {
     return <AppSidebar>
@@ -36,8 +36,8 @@ export default function AdminSidebar() {
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                        <SidebarMenuButton render={<Link to={'/categories'}></Link>}>
-                            <PresentationIcon />
+                        <SidebarMenuButton render={<Link to={'/transactions'}></Link>}>
+                            <ShoppingBasketIcon />
                             <span>Transactions</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

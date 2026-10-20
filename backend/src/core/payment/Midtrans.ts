@@ -3,7 +3,6 @@ import MidtransClient from "midtrans-client";
 class Midtrans {
     private static instance: MidtransClient.Snap | null = null;
 
-    // Sembunyikan constructor agar tidak bisa di-instansiasi dengan `new` di luar kelas
     private constructor() {}
 
     public static getInstance(): MidtransClient.Snap {

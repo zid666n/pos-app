@@ -8,7 +8,7 @@ interface IAppInputGroup {
     name: string,
     type: "text" | "number" | "email" | "password"
     onChange: (e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) => void,
-    defaultValue: string
+    defaultValue: string|number
 }
 
 export default function AppInputGroup({

@@ -5,6 +5,9 @@ import AppLayout from './components/layouts/AppLayout'
 import DashboardPage from './pages/DashboardPage'
 import UserPage from './pages/UserPage'
 import CategoryPage from './pages/CategoryPage'
+import TransactionPage from './pages/TransactionPage'
+import FormTransactionPage from './pages/FormTransactionPage'
+import ProductPage from './pages/ProductPage'
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
           <Route path='/dashboard' element={<DashboardPage />} />
           <Route path='/users' element={<UserPage/>} />
           <Route path='/categories' element={<CategoryPage/>} />
+          <Route path='/products' element={<ProductPage/>} />
+          <Route path='/transactions' element={<TransactionPage/>} />
+          <Route path='/transactions/create' element={<FormTransactionPage/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
