@@ -3,6 +3,8 @@ import ItemNotFoundError from "../../application/exceptions/ItemNotFoundError.ts
 import Midtrans from "../../../../core/payment/Midtrans.ts"
 import type { TProduct } from "../../../product/infrastructures/repositories/productRepository.ts"
 import ApplicationException from "../../application/exceptions/ApplicationException.ts"
+import type { RowDataPacket } from "mysql2"
+import generateOrderNumber from "../../application/services/generateOrderNumber.ts"
 
 export type TTransactionResult = {
     item_details: {
@@ -20,6 +22,10 @@ export type TTransactionResult = {
     payment_gateway: null | {
         token: string,
         redirect_url: string
+    },
+    transaction_details: {
+        status: string,
+        orderNumber: string
     }
 }
 
@@ -27,58 +33,60 @@ export type TCreateTransactionPayload = {
     order_number: string
     user_id: number
     payment_method: number
-    subtotal: string
     tax: number
-    total: number,
     pay: number,
     items: {
         product_id: number,
         quantity: number,
-        price: number,
-        name: string
     }[]
+}
+
+type TOrder = {
+    order_number: string,
+    user_id: number,
+    payment_method: number,
+    subtotal: number,
+    tax: number,
+    total: number
 }
 
 const createTransactionService = async (p: TCreateTransactionPayload): Promise<TTransactionResult> => {
     const connection = await Database.transaction()
     
     try {
-        let grossAmount = 0
-        let change = 0
+        let change: number = 0
         let status = "pending"
-        let cashReceive = 0
+        const TAX_RATE = 0.1
+        let paymentGateway = null
 
-        const itemDetails: { 
-            id: number,
-            name: string,
-            price: number,
-            quantity: number
-        }[] = []
-
-        p.items.map(async product => {
-            const res = await Database.query<TProduct|null>(`SELECT * FROM products WHERE id = ?`, [product.product_id])
-
-            if(!res) throw new ItemNotFoundError("Product")
-
-            grossAmount+=product.price
-
-            itemDetails.push({
-                id: res.id,
-                name: res.name,
-                price: res.price,
-                quantity: res.quantity
-            })
-        })
-
+        const itemDetails = await Promise.all(
+            p.items.map(async product => {
+                const [res] = await Database.query<(TProduct|null) & RowDataPacket[]>(`SELECT * FROM products WHERE id = ?`, [product.product_id])
         
+                if(!res) throw new ItemNotFoundError("Product")
+
+                return {
+                    product_id: product.product_id,
+                    name: res.name,
+                    price: res.price,
+                    quantity: product.quantity
+                }
+            })
+        )
+
+        const grossAmount = itemDetails.reduce((acc, item) => {
+            const price = Number(item.price) || 0;
+            const quantity = Number(item.quantity) || 0;
+
+            return Number(acc) + (price * quantity);
+        }, 0);
+
+        if (Number(p.pay) < grossAmount) throw new ApplicationException("Cash less then the total..", 400);
 
         if (p.payment_method === 2) {
-            cashReceive = Number(p.pay)
-
-            if (cashReceive < grossAmount) throw new ApplicationException("Cash less then the total..", 400)
-
-            change = cashReceive - Number(grossAmount)
+            change = Number(p.pay) - Number(grossAmount)
             status = 'settlement'
+
         } else if (p.payment_method === 1) {
             const instance = Midtrans.getInstance()
     
@@ -91,42 +99,46 @@ const createTransactionService = async (p: TCreateTransactionPayload): Promise<T
                 enable_payments: ['gopay'],
             } as any
     
-            const paymentResult = await instance.createTransaction(param)
+            paymentGateway = await instance.createTransaction(param)
         }
 
+        const result = await Database.insert<TOrder>([
+            'order_number',
+            'user_id',
+            'payment_method',
+            'subtotal',
+            'pay',
+            'tax',
+            'total'
+        ], [
+            await generateOrderNumber(),
+            p.user_id,
+            p.payment_method,
+            grossAmount,
+            p.pay,
+            p.tax,
+            grossAmount
+        ], 'orders')
 
-        // const result = await Database.insert([
-        //     'order_number',
-        //     'user_id',
-        //     'payment_method',
-        //     'subtotal',
-        //     'tax',
-        //     'total'
-        // ], [
-        //     p.order_number,
-        //     p.user_id,
-        //     p.payment_method,
-        //     res.grossAmount,
-        //     p.tax,
-        //     res.grossAmount
-        // ], 'orders')
-
-
-        
         await connection.commit()
         await connection.release()
 
         return {
-            item_details: p.items,
+            item_details: itemDetails,
+            transaction_details: {
+                orderNumber: result.order_number,
+                status: status
+            },
             payment_details: {
-                cashReceive: cashReceive,
+                cashReceive: p.pay,
                 changes: change,
                 total: grossAmount
             },
-            payment_gateway: null
+            payment_gateway: paymentGateway
         }
     } catch (error) {
         await connection.rollback()
+        await connection.release()
 
         throw error
     }

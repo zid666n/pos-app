@@ -2,6 +2,8 @@ import createTransactionService, { type TCreateTransactionPayload } from "../../
 
 const createTransactionUsecase = async (p: TCreateTransactionPayload) => {
     const result = await createTransactionService(p)
+
+    return result
 }
 
 export default createTransactionUsecase

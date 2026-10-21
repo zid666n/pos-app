@@ -8,6 +8,7 @@ import CategoryPage from './pages/CategoryPage'
 import TransactionPage from './pages/TransactionPage'
 import FormTransactionPage from './pages/FormTransactionPage'
 import ProductPage from './pages/ProductPage'
+import PrintTransactionPage from './pages/PrintTransactionPage'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/products' element={<ProductPage/>} />
           <Route path='/transactions' element={<TransactionPage/>} />
           <Route path='/transactions/create' element={<FormTransactionPage/>}/>
+          <Route path='/transactions/print' element={<PrintTransactionPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

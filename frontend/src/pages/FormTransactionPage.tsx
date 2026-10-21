@@ -8,7 +8,20 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Button } from "../lib/shadcn/ui/button";
 
 export default function FormTransactionPage() {
-    const {addToCart, cart, removeFromCart, updateQty} = useCreateTransaction()
+    const {
+        addToCart,
+        cart,
+        formState,
+        removeFromCart,
+        updateQty,
+        totalAmount,
+        totalChange,
+        handleChange,
+        handleSelect,
+        handleSubmit,
+        selectedPaymentMethod,
+        setPlaceholderPaymentMethod
+    } = useCreateTransaction()
 
     const {data} = useGetProduct()
 
@@ -45,12 +58,12 @@ export default function FormTransactionPage() {
                 <CardHeader className=" py-2 px-5 border-b">
                     <CardTitle className="text-sm font-semibold">Summary Cart</CardTitle>
                 </CardHeader>
-                <CardContent className="p-2 grid grid-rows-1 gap-5 overflow-y-auto max-h-[702px]">
+                <CardContent className="p-2 grid grid-rows-1 gap-5 overflow-y-auto max-h-[720px]">
                     {cart.map((cartProduct, index) => (
                         <React.Fragment key={index}>
                             <div className="space-y-0.5">
                                 <h4 className="font-semibold">{cartProduct.name}</h4>
-                                <span className="text-muted-foreground text-xs">Rp {cartProduct.price}</span>
+                                <span className="text-muted-foreground text-xs">{Number(cartProduct.price).toLocaleString('id-ID', {style: 'currency', 'currency': 'IDR', maximumFractionDigits: 0})}</span>
                             </div>
                             <div className="flex items-center justify-start gap-2">
                                 <button
@@ -86,18 +99,18 @@ export default function FormTransactionPage() {
                     </button> */}
                     <Field className="lg:max-w-1/2 max-w-full">
                         <FieldLabel>Payment Method</FieldLabel>
-                            <Select name="payment_method" onValueChange={(a) => console.log(a)}>
+                            <Select name="payment_method" defaultValue={formState.payment_method} onValueChange={(value) => handleSelect('payment_method', Number(value))}>
                         <SelectTrigger>
                             <SelectValue placeholder="Select One">
-
+                                {selectedPaymentMethod}
                             </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="1">
+                                <SelectItem value="1" onClick={() => setPlaceholderPaymentMethod("QRIS")}>
                                     QRIS
                                 </SelectItem>
-                                <SelectItem value="2">
+                                <SelectItem value="2" onClick={() => setPlaceholderPaymentMethod("Cash")}>
                                     Cash
                                 </SelectItem>
                             </SelectGroup>
@@ -105,15 +118,24 @@ export default function FormTransactionPage() {
                         </Select>
                     </Field>
                     <AppInputGroup
-                        defaultValue="a"
+                        defaultValue={formState.pay}
                         label="Pay"
-                        name="cash"
-                        onChange={() => {}}
+                        name="pay"
+                        onChange={handleChange}
                         placeholder="Enter your cash"
                         type="number"
                     />
-                    
-                    <Button disabled={cart.length < 1}>Save Transaction</Button>
+                    <div className="border-t border-boder min-w-full space-y-1 pt-4">
+                        <div className="flex justify-between text-lg font-semibold">
+                            <span>Total</span>
+                            <span>{Number(totalAmount).toLocaleString('id-ID', {style: 'currency', 'currency': 'IDR', maximumFractionDigits: 0})}</span>
+                        </div>
+                        <div className="flex justify-between text-muted-foreground mb-6">
+                            <span>Change</span>
+                            <span>{Number(totalChange).toLocaleString('id-ID', {style: 'currency', 'currency': 'IDR', maximumFractionDigits: 0})}</span>
+                        </div>
+                        <Button disabled={cart.length < 1} className="w-full" onClick={() => handleSubmit()}>Save Transaction</Button>
+                    </div>
                 </CardContent>
             </Card> 
         </div>

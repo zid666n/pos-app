@@ -246,3 +246,22 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
+
+@media print {
+  body * {
+    visibility: none;
+  }
+
+  .print\:border-none,
+  .print\:border-none * {
+    visibility: visible;
+  }
+
+  .print\:border-none {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: 80mm;
+  }
+}

@@ -1,46 +1,39 @@
 import type { Request, Response } from "express"
 import createTransactionUsecase from "../../application/usecases/createTransactionUsecase.ts"
 import type { TCreateTransactionPayload } from "../../../shared/infrastructures/services/createTransactionService.ts"
-import Midtrans from "../../../../core/payment/Midtrans.ts"
+import getAllTransactionUsecase from "../../application/usecases/getAllTransactionUsecase.ts"
+
+export const index = async (req: Request, res: Response) => {
+    const result = await getAllTransactionUsecase()
+    
+    return res
+        .status(200)
+        .json({
+            data: result
+        })
+}
 
 export const store = async (req: Request<{}, {}, TCreateTransactionPayload>, res: Response) => {
     const {
         items,
         order_number,
         payment_method,
-        subtotal,
         tax,
-        total,
+        pay
     } = req.body
 
-    // const result = await createTransactionUsecase({
-    //     items: items,
-    //     order_number: order_number,
-    //     payment_method: payment_method,
-    //     subtotal: subtotal,
-    //     tax: tax,
-    //     total: total,
-    //     user_id: Number(req.user?.id)
-    // })
+    const result = await createTransactionUsecase({
+        items: items,
+        order_number: "",
+        payment_method: payment_method,
+        tax: tax,
+        user_id: Number(req.user?.id),
+        pay: Number(pay),
+    })
 
     return res
         .status(200)
         .json({
-            data: {
-                item_details: [
-                    {
-
-                    }
-                ],
-                payment_details: {
-                    cashReceive: 1000,
-                    changes: 0,
-                    total: 1000,
-                },
-                payment_gateway: {
-                    token: '',
-                    redirect_url: ''
-                }
-            }
+            data: result
         })
 }
