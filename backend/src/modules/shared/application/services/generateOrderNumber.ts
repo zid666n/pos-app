@@ -15,7 +15,7 @@ const generateOrderNumber = async (): Promise<string> => {
 
     const order = res[0]
 
-    if (order === null) {
+    if (!order) {
         return 'trx-0001'
     } else {
         const orderNumber = Number(order.order_number.split('-')[1]) + 1.

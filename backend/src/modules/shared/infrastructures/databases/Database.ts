@@ -66,7 +66,7 @@ class Database
         return res.affectedRows > 0
     }
 
-    static async query<T>(query: string, values: (string|number|boolean)[]): Promise<T> {
+    static async query<T>(query: string, values: (string|number|boolean)[]|any[]): Promise<T> {
         const [res] = await this.pool.query<T & RowDataPacket[]>(query, values)
 
         return res

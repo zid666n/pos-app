@@ -85,18 +85,6 @@ export default function FormTransactionPage() {
                             </div>
                         </React.Fragment>
                     ))}
-                    {/* <button className="flex flex-col justify-between p-3 rounded-lg border border-border/80 bg-card hover:border-primary/60 text-left transition-all group gap-3">
-                        <div>
-                            <span className="text-xs text-muted-foreground line-clamp-1">Food</span>
-                            <h4 className="font-semibold text-sm line-clamp-1 mt-0.5 group:hover:text-primary">
-                                Nasi Goreng
-                            </h4>
-                        </div>
-                        <div className="flex justify-between items-center w-full">
-                            <span className="font-medium text-xs">Rp. 10.000</span>
-                            <span className="text-[12px] text-muted-foreground">100</span>
-                        </div>
-                    </button> */}
                     <Field className="lg:max-w-1/2 max-w-full">
                         <FieldLabel>Payment Method</FieldLabel>
                             <Select name="payment_method" defaultValue={formState.payment_method} onValueChange={(value) => handleSelect('payment_method', Number(value))}>
@@ -117,14 +105,14 @@ export default function FormTransactionPage() {
                         </SelectContent>
                         </Select>
                     </Field>
-                    <AppInputGroup
+                    {formState.payment_method === 2 && <AppInputGroup
                         defaultValue={formState.pay}
                         label="Pay"
                         name="pay"
                         onChange={handleChange}
                         placeholder="Enter your cash"
                         type="number"
-                    />
+                    />}
                     <div className="border-t border-boder min-w-full space-y-1 pt-4">
                         <div className="flex justify-between text-lg font-semibold">
                             <span>Total</span>

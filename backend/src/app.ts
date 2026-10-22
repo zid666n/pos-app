@@ -7,6 +7,7 @@ import productRouter from "./routes/productRouter.ts"
 import categoryRouter from "./routes/categoryRouter.ts"
 import authMiddleware from "./middlewares/authMiddleware.ts"
 import transactionRouter from "./routes/transactionRouter.ts"
+import ValidationError from "./modules/shared/application/exceptions/ValidationError.ts"
 
 const app = express()
 app.use(cors())
@@ -28,6 +29,20 @@ app.get("/", (req, res) => {
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (err instanceof ApplicationException) {
+        if (err instanceof ValidationError) {
+            return res
+                .status(err.statusCode)
+                .json({
+                    errors: err.error.details.map(joiErr => {
+                        return {
+                            field: joiErr.path.join('.'),
+                            message: joiErr.message
+
+                        }
+                    }),
+                    message: err.message
+                })
+        }
         return res
         .status(err.statusCode)
         .json({

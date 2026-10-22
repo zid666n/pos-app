@@ -12,7 +12,7 @@ export type TUserPayload = {
     name: string,
     email: string,
     is_active: boolean,
-    password: string
+    password: string|null
 }
 
 export const getUsers = async (): Promise<TUser[]> => {
@@ -27,7 +27,7 @@ export const findUser = async (id: number): Promise<TUser> => {
     return (user as unknown) as TUser
 }
 
-export const createUser = async (payload: TUserPayload): Promise<TUser> => {
+export const createUser = async (payload: TUserPayload & {password: string}): Promise<TUser> => {
     const res = await Database.insert<TUser>(['name', 'email', 'is_active', 'password'], [payload.name, payload.email, payload.is_active, payload.password], 'users')
     
     return res

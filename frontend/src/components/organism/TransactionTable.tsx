@@ -1,6 +1,5 @@
 import useDeleteCategory from "../../hooks/category/useDeleteCategory"
-import useEditCategory from "../../hooks/category/useEditCategory"
-import useGetCategory from "../../hooks/category/useGetCategory"
+import useGetAllTransaction from "../../hooks/transaction/useGetAllTransaction"
 import { Button } from "../../lib/shadcn/ui/button"
 import { TableCell, TableHead, TableRow } from "../../lib/shadcn/ui/table"
 import ActiveBadge from "../atoms/ActiveBadge"
@@ -16,19 +15,8 @@ export default function TransactionTable() {
         isOpenDialog: isOpenDelete,
         category: deletedCategory
     } = useDeleteCategory()
-    
-    const {
-        handleCancel,
-        handleChange,
-        handleOpen,
-        handleSelect,
-        handleSubmit,
-        isLoading,
-        isModalOpen,
-        formState: category
-    } = useEditCategory()
 
-    const {data} = useGetCategory()
+    const {data} = useGetAllTransaction()
 
     return <>
         <AppTable
@@ -36,17 +24,15 @@ export default function TransactionTable() {
                 <TableHead>#</TableHead>,
                 <TableHead>Order Number</TableHead>,
                 <TableHead>Payment Method</TableHead>,
-                <TableHead>Product</TableHead>,
                 <TableHead align="right" className="text-right">Action</TableHead>
             ]}
         >
-            {data && data.data.map((category, index) => <TableRow key={index}>
+            {data && data.data.map((transaction, index) => <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
-                <TableCell>{category.name}</TableCell>
-                <TableCell>{category.is_active ? <ActiveBadge text="Active"/> : <DeactiveBadge text="Deactive"/>}</TableCell>
+                <TableCell>{transaction.order_number}</TableCell>
+                <TableCell>{transaction.payment_method > 1 ? "Cash" : "QRIS"}</TableCell>
                 <TableCell align="right" className="space-x-2">
-                    <Button variant="default" type="button" onClick={() => handleOpen(category)}>Edit</Button>
-                    <Button variant="destructive" onClick={() => handleDeleteOpen(category)}>Delete</Button>
+                    {/* <Button variant="destructive" onClick={() => handleDeleteOpen(transaction)}>Delete</Button> */}
                 </TableCell>
             </TableRow>)}
         </AppTable>

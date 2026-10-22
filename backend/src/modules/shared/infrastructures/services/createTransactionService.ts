@@ -42,7 +42,7 @@ export type TCreateTransactionPayload = {
 }
 
 type TOrder = {
-    order_number: string,
+    id: number,
     user_id: number,
     payment_method: number,
     subtotal: number,
@@ -102,6 +102,8 @@ const createTransactionService = async (p: TCreateTransactionPayload): Promise<T
             paymentGateway = await instance.createTransaction(param)
         }
 
+        const orderNumber = await generateOrderNumber()
+
         const result = await Database.insert<TOrder>([
             'order_number',
             'user_id',
@@ -111,7 +113,7 @@ const createTransactionService = async (p: TCreateTransactionPayload): Promise<T
             'tax',
             'total'
         ], [
-            await generateOrderNumber(),
+            orderNumber,
             p.user_id,
             p.payment_method,
             grossAmount,
@@ -120,13 +122,25 @@ const createTransactionService = async (p: TCreateTransactionPayload): Promise<T
             grossAmount
         ], 'orders')
 
+        await Database.query<void>(`
+            INSERT INTO order_details (??) VALUES ?    
+        `, [
+            [
+                'order_id',
+                'product_id',
+                'quantity',
+                'price'
+            ],
+            itemDetails.map(product => [result.id, product.product_id, product.quantity, product.price])
+        ])
+
         await connection.commit()
         await connection.release()
 
         return {
             item_details: itemDetails,
             transaction_details: {
-                orderNumber: result.order_number,
+                orderNumber: orderNumber,
                 status: status
             },
             payment_details: {

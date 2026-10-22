@@ -8,15 +8,6 @@ import { useNavigate } from "react-router-dom"
 
 export default function TransactionPage() {
     const navigate = useNavigate()
-    const [openCreateModal, setOpenCreateModal] = useState<boolean>(false)
-    const {
-        handleChange: handleChangeCreate,
-        handleSubmit: handleSubmitCreate,
-        isLoading: isLoadingCreate,
-        handleClose: handleCloseCreate,
-        handleSelect: handleSelectCreate
-    } = useCreateCategory()
-
     return (
         <>
             <AppHeader

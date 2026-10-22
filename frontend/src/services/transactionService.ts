@@ -1,3 +1,4 @@
+import type { TResponseAPI } from "../lib/types/response.type";
 import api from "./api";
 
 export type TCreateTransactionPayload = {
@@ -9,3 +10,16 @@ export type TCreateTransactionPayload = {
     }[]
 }
 export const createTransactionService = async (p: TCreateTransactionPayload) => await api.post('/transactions', p)
+
+export type TTransaction = {
+    id: number,
+    order_number: string,
+    payment_method: number,
+    subtotal: number,
+    tax: number,
+    total: number,
+    pay: number,
+    status: string,
+    created_at: string
+}
+export const getTransactionService = async (): Promise<TResponseAPI<TTransaction[]>> => await api.get('/transactions')

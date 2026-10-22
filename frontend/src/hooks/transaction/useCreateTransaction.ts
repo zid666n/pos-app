@@ -18,7 +18,7 @@ const useCreateTransaction = () => {
     const mutation = useMutation({
         mutationFn: async (payload: TCreateTransactionPayload) => await createTransactionService(payload),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['products']})
+            queryClient.invalidateQueries({queryKey: ['transactions']})
             // setCart([])
             // setFormState(initState)
 
