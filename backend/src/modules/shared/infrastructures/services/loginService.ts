@@ -1,3 +1,4 @@
+import prisma from "../../../../core/databases/prisma.ts"
 import InvalidCredentialError from "../../application/exceptions/InvalidCredentialError.ts"
 import Database from "../databases/Database.ts"
 import bcrypt from "bcrypt"
@@ -25,11 +26,15 @@ type TAuthUser = {
 }
 
 const loginService = async ({email, password}: TLoginPayload): Promise<TAuthUser> => {
-    const users = await Database.query<TRawUser[]>(`SELECT * FROM users where email = ?`, [email])
+    const user = await prisma.user.findUnique({
+        where: {
+            email: email
+        }
+    })
+    // const users = await Database.query<TRawUser[]>(`SELECT * FROM users where email = ?`, [email])
 
-    if (users.length === 0 || users[0] === undefined) throw new InvalidCredentialError()
+    if (!user) throw new InvalidCredentialError()
 
-    const user = users[0]
     const res = await bcrypt.compare(password, user.password)
 
     if (!res) throw new InvalidCredentialError()
@@ -37,10 +42,9 @@ const loginService = async ({email, password}: TLoginPayload): Promise<TAuthUser
     const token = jwt.sign({
         id: user.id,
         name: user.name,
-        email: user.email,
-        is_active: user.is_active
+        email: user.email
     },
-    process.env.JWT_SECRET || "secret",
+        process.env.JWT_SECRET || "secret",
     {
         expiresIn: (process.env.JWT_EXPIRES_IN as any) || "1d"
     })
@@ -49,7 +53,7 @@ const loginService = async ({email, password}: TLoginPayload): Promise<TAuthUser
         id: user.id,
         email: user.email,
         name: user.email,
-        is_active: user.is_active,
+        is_active: true,
         token: token
     }
 }
